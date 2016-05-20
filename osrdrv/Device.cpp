@@ -44,16 +44,13 @@ Return Value:
 
 --*/
 {
-    WDF_OBJECT_ATTRIBUTES   deviceAttributes;
-    PDEVICE_CONTEXT deviceContext;
-    WDFDEVICE device;
-    NTSTATUS status;
-
     PAGED_CODE();
 
+    WDF_OBJECT_ATTRIBUTES   deviceAttributes;
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
 
-    status = WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device);
+    WDFDEVICE device;
+    auto status = WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device);
 
     if (NT_SUCCESS(status)) {
         //
@@ -65,7 +62,7 @@ Return Value:
         // If you pass a wrong object handle it will return NULL and assert if
         // run under framework verifier mode.
         //
-        deviceContext = DeviceGetContext(device);
+        auto deviceContext = DeviceGetContext(device);
 
         //
         // Initialize the context.

@@ -47,10 +47,6 @@ Return Value:
 
 --*/
 {
-    WDFQUEUE queue;
-    NTSTATUS status;
-    WDF_IO_QUEUE_CONFIG    queueConfig;
-
     PAGED_CODE();
     
     //
@@ -58,6 +54,7 @@ Return Value:
     // configure-fowarded using WdfDeviceConfigureRequestDispatching to goto
     // other queues get dispatched here.
     //
+    WDF_IO_QUEUE_CONFIG    queueConfig;
     WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(
          &queueConfig,
         WdfIoQueueDispatchParallel
@@ -66,7 +63,8 @@ Return Value:
     queueConfig.EvtIoDeviceControl = DriverEvtIoDeviceControl;
     queueConfig.EvtIoStop = DriverEvtIoStop;
 
-    status = WdfIoQueueCreate(
+    WDFQUEUE queue;
+    auto status = WdfIoQueueCreate(
                  Device,
                  &queueConfig,
                  WDF_NO_OBJECT_ATTRIBUTES,
