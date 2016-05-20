@@ -17,6 +17,8 @@ Environment:
 #include "driver.h"
 #include "driver.tmh"
 
+#include "Result.h"
+
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (INIT, DriverEntry)
 #pragma alloc_text (PAGE, DriverEvtDeviceAdd)
@@ -124,11 +126,11 @@ Return Value:
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
-    auto status = DriverCreateDevice(DeviceInit);
+    RETURN_IF_NT_FAILED(DriverCreateDevice(DeviceInit));
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
 
-    return status;
+    return STATUS_SUCCESS;
 }
 
 VOID
