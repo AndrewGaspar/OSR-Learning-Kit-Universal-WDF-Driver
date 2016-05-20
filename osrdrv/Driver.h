@@ -23,14 +23,10 @@ Environment:
 #include "queue.h"
 #include "trace.h"
 
-EXTERN_C_START
-
 //
 // WDFDRIVER Events
 //
 
-DRIVER_INITIALIZE DriverEntry;
-EVT_WDF_DRIVER_DEVICE_ADD DriverEvtDeviceAdd;
-EVT_WDF_OBJECT_CONTEXT_CLEANUP DriverEvtDriverContextCleanup;
-
-EXTERN_C_END
+EXTERN_C DRIVER_INITIALIZE DriverEntry;
+EXTERN_C EVT_WDF_DRIVER_DEVICE_ADD DriverEvtDeviceAdd;
+EXTERN_C EVT_WDF_OBJECT_CONTEXT_CLEANUP DriverEvtDriverContextCleanup;
