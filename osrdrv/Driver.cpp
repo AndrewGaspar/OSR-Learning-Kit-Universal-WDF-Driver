@@ -16,6 +16,8 @@ Environment:
 
 #include "driver.h"
 
+#include <ktl\scope.h>
+
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (INIT, DriverEntry)
 #pragma alloc_text (PAGE, DriverEvtDeviceAdd)
@@ -69,6 +71,10 @@ Return Value:
     // Initialize TraceLogging
     TraceLoggingRegister(OSRDriverTraceProvider);
 
+    auto unregisterLoggingOnFailure = ktl::ScopeExit([]() {
+        TraceLoggingUnregister(OSRDriverTraceProvider);
+    });
+
     OSRLogEntry();
 
     //
@@ -85,22 +91,14 @@ Return Value:
                            DriverEvtDeviceAdd
                            );
 
-    auto status = WdfDriverCreate(DriverObject,
-                             RegistryPath,
-                             &attributes,
-                             &config,
-                             WDF_NO_HANDLE
-                             );
-
-    if (!NT_SUCCESS(status)) {
-        OSRLoggingWrite("WdfDriverCreate failed", TraceLoggingLevel(TRACE_LEVEL_ERROR), TraceLoggingValue(status));
-        TraceLoggingUnregister(OSRDriverTraceProvider);
-        return status;
-    }
+    RETURN_IF_NT_FAILED_UNEXPECTED(
+        WdfDriverCreate(DriverObject, RegistryPath, &attributes, &config, WDF_NO_HANDLE));
 
     OSRLogExit();
 
-    return status;
+    unregisterLoggingOnFailure.Dismiss();
+
+    return STATUS_SUCCESS;
 }
 
 NTSTATUS
