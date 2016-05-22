@@ -1,16 +1,12 @@
 #pragma once
 
+#include "type_traits.h"
+
 namespace ktl
 {
     template<typename T>
-    auto move(T & value) -> T&&
+    constexpr remove_reference_t<T>&& move(T&& value)
     {
-        return static_cast<T&&>(value);
-    }
-
-    template<typename T>
-    auto move(T&& value) -> T&&
-    {
-        return value;
+        return static_cast<remove_reference_t<T>&&>(value);
     }
 }
