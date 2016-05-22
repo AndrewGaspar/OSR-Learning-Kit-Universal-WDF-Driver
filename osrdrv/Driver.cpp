@@ -30,14 +30,6 @@ TRACELOGGING_DEFINE_PROVIDER(
     (0x27d1e96e, 0x78c4, 0x41d7, 0xab, 0xa4, 0x9f, 0x9c, 0xa3, 0x37, 0x9a, 0x15));
 
 NTSTATUS
-AlwaysFails(ULONG TakesAParameter)
-{
-    UNREFERENCED_PARAMETER((TakesAParameter));
-
-    return STATUS_CANT_WAIT;
-}
-
-NTSTATUS
 DriverEntry(
     _In_ PDRIVER_OBJECT  DriverObject,
     _In_ PUNICODE_STRING RegistryPath
