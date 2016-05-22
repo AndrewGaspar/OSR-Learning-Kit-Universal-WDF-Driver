@@ -34,10 +34,10 @@
     <ClInclude Include="Queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trace.h">
+    <ClInclude Include="Result.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Result.h">
+    <ClInclude Include="TraceLogging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

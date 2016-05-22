@@ -15,9 +15,6 @@ Environment:
 --*/
 
 #include "driver.h"
-#include "device.tmh"
-
-#include "Result.h"
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (PAGE, DriverCreateDevice)
@@ -48,7 +45,9 @@ Return Value:
 {
     PAGED_CODE();
 
-    WDF_OBJECT_ATTRIBUTES   deviceAttributes;
+    OSRLogEntry();
+
+    WDF_OBJECT_ATTRIBUTES deviceAttributes;
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
 
     WDFDEVICE device;
@@ -64,12 +63,12 @@ Return Value:
     // run under framework verifier mode.
     //
     auto deviceContext = DeviceGetContext(device);
-
+    
     //
     // Initialize the context.
     //
     deviceContext->PrivateDeviceData = 0;
-
+    
     //
     // Create a device interface so that applications can find and talk
     // to us.
@@ -84,6 +83,8 @@ Return Value:
     // Initialize the I/O Package and any Queues
     //
     RETURN_IF_NT_FAILED(DriverQueueInitialize(device));
+
+    OSRLogExit();
 
     return STATUS_SUCCESS;
 }

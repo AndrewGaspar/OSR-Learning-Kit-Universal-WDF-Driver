@@ -15,9 +15,6 @@ Environment:
 --*/
 
 #include "driver.h"
-#include "driver.tmh"
-
-#include "Result.h"
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (INIT, DriverEntry)
@@ -25,6 +22,18 @@ Environment:
 #pragma alloc_text (PAGE, DriverEvtDriverContextCleanup)
 #endif
 
+TRACELOGGING_DEFINE_PROVIDER(
+    OSRDriverTraceProvider,
+    "OSRTraceProvider",
+    (0x27d1e96e, 0x78c4, 0x41d7, 0xab, 0xa4, 0x9f, 0x9c, 0xa3, 0x37, 0x9a, 0x15));
+
+NTSTATUS
+AlwaysFails(ULONG TakesAParameter)
+{
+    UNREFERENCED_PARAMETER((TakesAParameter));
+
+    return STATUS_CANT_WAIT;
+}
 
 NTSTATUS
 DriverEntry(
@@ -57,12 +66,10 @@ Return Value:
 
 --*/
 {
-    //
-    // Initialize WPP Tracing
-    //
-    WPP_INIT_TRACING( DriverObject, RegistryPath );
+    // Initialize TraceLogging
+    TraceLoggingRegister(OSRDriverTraceProvider);
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
+    OSRLogEntry();
 
     //
     // Register a cleanup callback so that we can call WPP_CLEANUP when
@@ -86,12 +93,12 @@ Return Value:
                              );
 
     if (!NT_SUCCESS(status)) {
-        TraceEvents(TRACE_LEVEL_ERROR, TRACE_DRIVER, "WdfDriverCreate failed %!STATUS!", status);
-        WPP_CLEANUP(DriverObject);
+        OSRLoggingWrite("WdfDriverCreate failed", TraceLoggingLevel(TRACE_LEVEL_ERROR), TraceLoggingValue(status));
+        TraceLoggingUnregister(OSRDriverTraceProvider);
         return status;
     }
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
+    OSRLogExit();
 
     return status;
 }
@@ -124,11 +131,11 @@ Return Value:
 
     PAGED_CODE();
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
+    OSRLogEntry();
 
     RETURN_IF_NT_FAILED(DriverCreateDevice(DeviceInit));
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
+    OSRLogExit();
 
     return STATUS_SUCCESS;
 }
@@ -156,11 +163,7 @@ Return Value:
 
     PAGED_CODE ();
 
-    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
+    OSRLogEntry();
 
-    //
-    // Stop WPP Tracing
-    //
-    WPP_CLEANUP( WdfDriverWdmGetDriverObject( (WDFDRIVER) DriverObject) );
-
+    TraceLoggingUnregister(OSRDriverTraceProvider);
 }

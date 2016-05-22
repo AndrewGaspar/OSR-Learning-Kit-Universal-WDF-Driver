@@ -18,10 +18,14 @@ Environment:
 
 #include <ntddk.h>
 #include <wdf.h>
+#include <usb.h>
+#include <usbdlib.h>
+#include <wdfusb.h>
 
 #include "device.h"
 #include "queue.h"
-#include "trace.h"
+#include "TraceLogging.h"
+#include "Result.h"
 
 //
 // WDFDRIVER Events

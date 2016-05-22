@@ -15,7 +15,6 @@ Environment:
 --*/
 
 #include "driver.h"
-#include "queue.tmh"
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (PAGE, DriverQueueInitialize)
@@ -48,6 +47,8 @@ Return Value:
 --*/
 {
     PAGED_CODE();
+
+    OSRLogEntry();
     
     //
     // Configure a default queue so that requests that are not
@@ -64,19 +65,17 @@ Return Value:
     queueConfig.EvtIoStop = DriverEvtIoStop;
 
     WDFQUEUE queue;
-    auto status = WdfIoQueueCreate(
-                 Device,
-                 &queueConfig,
-                 WDF_NO_OBJECT_ATTRIBUTES,
-                 &queue
-                 );
+    RETURN_IF_NT_FAILED_UNEXPECTED(
+        WdfIoQueueCreate(
+            Device,
+            &queueConfig,
+            WDF_NO_OBJECT_ATTRIBUTES,
+            &queue
+            ));
 
-    if( !NT_SUCCESS(status) ) {
-        TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "WdfIoQueueCreate failed %!STATUS!", status);
-        return status;
-    }
+    OSRLogExit();
 
-    return status;
+    return STATUS_SUCCESS;
 }
 
 VOID
@@ -112,14 +111,19 @@ Return Value:
 
 --*/
 {
-    TraceEvents(TRACE_LEVEL_INFORMATION, 
-                TRACE_QUEUE, 
-                "%!FUNC! Queue 0x%p, Request 0x%p OutputBufferLength %d InputBufferLength %d IoControlCode %d", 
-                Queue, Request, (int) OutputBufferLength, (int) InputBufferLength, IoControlCode);
+    OSRLogEntry();
 
+    OSRLoggingWrite("IOCTL Request",
+        TraceLoggingLevel(TRACE_LEVEL_INFORMATION),
+        TraceLoggingPointer(Queue),
+        TraceLoggingPointer(Request),
+        TraceLoggingValue(OutputBufferLength),
+        TraceLoggingValue(InputBufferLength),
+        TraceLoggingValue(IoControlCode));
+    
     WdfRequestComplete(Request, STATUS_SUCCESS);
 
-    return;
+    OSRLogExit();
 }
 
 VOID
@@ -151,10 +155,14 @@ Return Value:
 
 --*/
 {
-    TraceEvents(TRACE_LEVEL_INFORMATION, 
-                TRACE_QUEUE, 
-                "%!FUNC! Queue 0x%p, Request 0x%p ActionFlags %d", 
-                Queue, Request, ActionFlags);
+    OSRLogEntry();
+
+    OSRLoggingWrite(
+        "Stop Queue",
+        TraceLoggingLevel(TRACE_LEVEL_INFORMATION),
+        TraceLoggingPointer(Queue),
+        TraceLoggingPointer(Request),
+        TraceLoggingValue(ActionFlags));
 
     //
     // In most cases, the EvtIoStop callback function completes, cancels, or postpones
@@ -194,6 +202,6 @@ Return Value:
     // to crash with bugcheck code 9F.
     //
 
-    return;
+    OSRLogExit();
 }
 
