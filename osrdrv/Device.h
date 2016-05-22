@@ -14,7 +14,7 @@ Environment:
 
 --*/
 
-#include "public.h"
+#include "Public.h"
 
 //
 // The device context performs the same job as

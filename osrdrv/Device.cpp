@@ -14,7 +14,7 @@ Environment:
 
 --*/
 
-#include "driver.h"
+#include "Driver.h"
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (PAGE, DriverCreateDevice)

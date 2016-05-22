@@ -71,7 +71,7 @@ Return Value:
     // Initialize TraceLogging
     TraceLoggingRegister(OSRDriverTraceProvider);
 
-    auto unregisterLoggingOnFailure = ktl::ScopeExit([]() {
+    auto unregisterLoggingOnFailure = ktl::make_scope_exit([]() {
         TraceLoggingUnregister(OSRDriverTraceProvider);
     });
 

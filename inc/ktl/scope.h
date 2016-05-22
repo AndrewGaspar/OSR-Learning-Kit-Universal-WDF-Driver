@@ -51,8 +51,8 @@ namespace ktl
     }
 
     template<typename F>
-    auto ScopeExit(F&& f)
+    auto make_scope_exit(F&& f)
     {
-        return details::ScopeExitImpl<decltype(f)>(ktl::move(f));
+        return details::ScopeExitImpl<F>(ktl::move(f));
     }
 }

@@ -22,8 +22,8 @@ Environment:
 #include <usbdlib.h>
 #include <wdfusb.h>
 
-#include "device.h"
-#include "queue.h"
+#include "Device.h"
+#include "Queue.h"
 #include "TraceLogging.h"
 #include "Result.h"
 
