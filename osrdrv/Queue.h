@@ -14,6 +14,8 @@ Environment:
 
 --*/
 
+#pragma once
+
 //
 // This is the context that can be placed per queue
 // and would contain per queue information.

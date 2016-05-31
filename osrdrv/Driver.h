@@ -14,6 +14,8 @@ Environment:
 
 --*/
 
+#pragma once
+
 #define INITGUID
 
 #include <ntddk.h>

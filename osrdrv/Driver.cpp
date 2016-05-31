@@ -24,6 +24,7 @@ Environment:
 #pragma alloc_text (PAGE, DriverEvtDriverContextCleanup)
 #endif
 
+// {27d1e96e-78c4-41d7-aba4-9f9ca3379a15}
 TRACELOGGING_DEFINE_PROVIDER(
     OSRDriverTraceProvider,
     "OSRTraceProvider",

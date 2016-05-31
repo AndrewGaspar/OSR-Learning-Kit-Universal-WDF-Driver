@@ -55,23 +55,15 @@ Return Value:
     // configure-fowarded using WdfDeviceConfigureRequestDispatching to goto
     // other queues get dispatched here.
     //
-    WDF_IO_QUEUE_CONFIG    queueConfig;
-    WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(
-         &queueConfig,
-        WdfIoQueueDispatchParallel
-        );
+    WDF_IO_QUEUE_CONFIG ioctlQueueConfig;
+    WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(&ioctlQueueConfig, WdfIoQueueDispatchParallel);
 
-    queueConfig.EvtIoDeviceControl = DriverEvtIoDeviceControl;
-    queueConfig.EvtIoStop = DriverEvtIoStop;
+    ioctlQueueConfig.EvtIoDeviceControl = DriverEvtIoDeviceControl;
+    ioctlQueueConfig.EvtIoStop = DriverEvtIoStop;
 
-    WDFQUEUE queue;
+    WDFQUEUE ioctlQueue;
     RETURN_IF_NT_FAILED_UNEXPECTED(
-        WdfIoQueueCreate(
-            Device,
-            &queueConfig,
-            WDF_NO_OBJECT_ATTRIBUTES,
-            &queue
-            ));
+        WdfIoQueueCreate(Device, &ioctlQueueConfig, WDF_NO_OBJECT_ATTRIBUTES, &ioctlQueue));
 
     OSRLogExit();
 
@@ -120,7 +112,7 @@ Return Value:
         TraceLoggingValue(OutputBufferLength),
         TraceLoggingValue(InputBufferLength),
         TraceLoggingValue(IoControlCode));
-    
+
     WdfRequestComplete(Request, STATUS_SUCCESS);
 
     OSRLogExit();
