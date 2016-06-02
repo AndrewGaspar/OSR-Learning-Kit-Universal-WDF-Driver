@@ -17,16 +17,7 @@ Environment:
 #include "Precomp.h"
 #include "Driver.h"
 
-#ifdef ALLOC_PRAGMA
-#pragma alloc_text (PAGE, DriverCreateDevice)
-#pragma alloc_text (PAGE, EvtOSRDevicePrepareHardware)
-#pragma alloc_text (PAGE, EvtOSRD0Entry)
-#pragma alloc_text (PAGE, EvtOSRD0Exit)
-#endif
-
-
-NTSTATUS
-DriverCreateDevice(
+PASSIVE PAGED NTSTATUS DriverCreateDevice(
     _Inout_ PWDFDEVICE_INIT DeviceInit)
 /*++
 
@@ -99,10 +90,7 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
-_IRQL_requires_same_
-_IRQL_requires_max_(PASSIVE_LEVEL)
-NTSTATUS
-EvtOSRD0Entry(
+PASSIVE PAGED NTSTATUS EvtOSRD0Entry(
     _In_ WDFDEVICE Device,
     _In_ WDF_POWER_DEVICE_STATE PreviousState)
 {
@@ -132,10 +120,7 @@ EvtOSRD0Entry(
     return STATUS_SUCCESS;
 }
 
-_IRQL_requires_same_
-_IRQL_requires_max_(PASSIVE_LEVEL)
-NTSTATUS
-EvtOSRD0Exit(
+PASSIVE PAGED NTSTATUS EvtOSRD0Exit(
     _In_ WDFDEVICE Device,
     _In_ WDF_POWER_DEVICE_STATE TargetState)
 {
@@ -165,10 +150,7 @@ EvtOSRD0Exit(
     return STATUS_SUCCESS;
 }
 
-_IRQL_requires_same_
-_IRQL_requires_max_(PASSIVE_LEVEL)
-NTSTATUS
-EvtOSRDevicePrepareHardware(
+PASSIVE PAGED NTSTATUS EvtOSRDevicePrepareHardware(
     _In_ WDFDEVICE Device,
     _In_ WDFCMRESLIST ResourcesRaw,
     _In_ WDFCMRESLIST ResourcesTranslated)

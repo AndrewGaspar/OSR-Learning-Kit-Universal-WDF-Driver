@@ -24,23 +24,15 @@ Environment:
 
 #include "Public.h"
 
-#ifdef ALLOC_PRAGMA
-#pragma alloc_text (INIT, DriverEntry)
-#pragma alloc_text (PAGE, DriverEvtDeviceAdd)
-#pragma alloc_text (PAGE, DriverEvtDriverContextCleanup)
-#endif
-
 // {27d1e96e-78c4-41d7-aba4-9f9ca3379a15}
 TRACELOGGING_DEFINE_PROVIDER(
     OSRDriverTraceProvider,
     "OSRTraceProvider",
     (0x27d1e96e, 0x78c4, 0x41d7, 0xab, 0xa4, 0x9f, 0x9c, 0xa3, 0x37, 0x9a, 0x15));
 
-NTSTATUS
-DriverEntry(
+PASSIVE INIT_CODE NTSTATUS DriverEntry(
     _In_ PDRIVER_OBJECT  DriverObject,
-    _In_ PUNICODE_STRING RegistryPath
-    )
+    _In_ PUNICODE_STRING RegistryPath)
 /*++
 
 Routine Description:
@@ -98,11 +90,9 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
-NTSTATUS
-DriverEvtDeviceAdd(
+PASSIVE PAGED NTSTATUS DriverEvtDeviceAdd(
     _In_    WDFDRIVER       Driver,
-    _Inout_ PWDFDEVICE_INIT DeviceInit
-    )
+    _Inout_ PWDFDEVICE_INIT DeviceInit)
 /*++
 Routine Description:
 
@@ -135,10 +125,8 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
-VOID
-DriverEvtDriverContextCleanup(
-    _In_ WDFOBJECT DriverObject
-    )
+PASSIVE PAGED VOID DriverEvtDriverContextCleanup(
+    _In_ WDFOBJECT DriverObject)
 /*++
 Routine Description:
 

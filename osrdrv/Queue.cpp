@@ -17,14 +17,8 @@ Environment:
 #include "Precomp.h"
 #include "driver.h"
 
-#ifdef ALLOC_PRAGMA
-#pragma alloc_text (PAGE, DriverQueueInitialize)
-#endif
-
-NTSTATUS
-DriverQueueInitialize(
-    _In_ WDFDEVICE Device
-    )
+PASSIVE PAGED NTSTATUS DriverQueueInitialize(
+    _In_ WDFDEVICE Device)
 /*++
 
 Routine Description:
@@ -71,14 +65,12 @@ Return Value:
     return STATUS_SUCCESS;
 }
 
-VOID
-DriverEvtIoDeviceControl(
+PASSIVE PAGED VOID DriverEvtIoDeviceControl(
     _In_ WDFQUEUE Queue,
     _In_ WDFREQUEST Request,
     _In_ size_t OutputBufferLength,
     _In_ size_t InputBufferLength,
-    _In_ ULONG IoControlCode
-    )
+    _In_ ULONG IoControlCode)
 /*++
 
 Routine Description:
@@ -119,12 +111,10 @@ Return Value:
     OSRLogExit();
 }
 
-VOID
-DriverEvtIoStop(
+PASSIVE PAGED VOID DriverEvtIoStop(
     _In_ WDFQUEUE Queue,
     _In_ WDFREQUEST Request,
-    _In_ ULONG ActionFlags
-)
+    _In_ ULONG ActionFlags)
 /*++
 
 Routine Description:

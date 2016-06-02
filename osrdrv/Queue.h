@@ -28,15 +28,12 @@ typedef struct _QUEUE_CONTEXT {
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(QUEUE_CONTEXT, QueueGetContext)
 
-EXTERN_C
-NTSTATUS
-DriverQueueInitialize(
-    _In_ WDFDEVICE hDevice
-    );
+EXTERN_C PASSIVE PAGED NTSTATUS DriverQueueInitialize(
+    _In_ WDFDEVICE hDevice);
 
 //
 // Events from the IoQueue object
 //
-EXTERN_C EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL DriverEvtIoDeviceControl;
-EXTERN_C EVT_WDF_IO_QUEUE_IO_STOP DriverEvtIoStop;
+EXTERN_C PASSIVE PAGED EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL DriverEvtIoDeviceControl;
+EXTERN_C PASSIVE PAGED EVT_WDF_IO_QUEUE_IO_STOP DriverEvtIoStop;
 
