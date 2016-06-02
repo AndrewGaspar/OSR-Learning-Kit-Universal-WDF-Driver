@@ -60,7 +60,7 @@ Return Value:
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
 
     WDFDEVICE device;
-    RETURN_IF_NT_FAILED(WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device));
+    RETURN_IF_NT_FAILED_EXPECTED(WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device));
 
     //
     // Get a pointer to the device context structure that we just associated
@@ -82,7 +82,7 @@ Return Value:
     // Create a device interface so that applications can find and talk
     // to us.
     //
-    RETURN_IF_NT_FAILED(WdfDeviceCreateDeviceInterface(
+    RETURN_IF_NT_FAILED_EXPECTED(WdfDeviceCreateDeviceInterface(
         device,
         &GUID_DEVINTERFACE_OSR_FX2,
         NULL // ReferenceString
@@ -91,7 +91,7 @@ Return Value:
     //
     // Initialize the I/O Package and any Queues
     //
-    RETURN_IF_NT_FAILED(DriverQueueInitialize(device));
+    RETURN_IF_NT_FAILED_EXPECTED(DriverQueueInitialize(device));
 
     OSRLogExit();
 
@@ -113,17 +113,17 @@ EvtOSRD0Entry(
 
     if (context->DipSwitches)
     {
-        RETURN_IF_NT_FAILED_UNEXPECTED(context->DipSwitches.Start());
+        RETURN_IF_NT_FAILED(context->DipSwitches.Start());
     }
 
     if (context->InData)
     {
-        RETURN_IF_NT_FAILED_UNEXPECTED(context->InData.Start());
+        RETURN_IF_NT_FAILED(context->InData.Start());
     }
 
     if (context->OutData)
     {
-        RETURN_IF_NT_FAILED_UNEXPECTED(context->OutData.Start());
+        RETURN_IF_NT_FAILED(context->OutData.Start());
     }
 
     OSRLogExit();
@@ -185,13 +185,13 @@ EvtOSRDevicePrepareHardware(
         WDF_USB_DEVICE_CREATE_CONFIG createParams;
         WDF_USB_DEVICE_CREATE_CONFIG_INIT(&createParams, USBD_CLIENT_CONTRACT_VERSION_602);
 
-        RETURN_IF_NT_FAILED_UNEXPECTED(
+        RETURN_IF_NT_FAILED(
             WdfUsbTargetDeviceCreateWithParameters(Device, &createParams, WDF_NO_OBJECT_ATTRIBUTES, &context->UsbDevice));
 
         WDF_USB_DEVICE_SELECT_CONFIG_PARAMS configParams;
         WDF_USB_DEVICE_SELECT_CONFIG_PARAMS_INIT_SINGLE_INTERFACE(&configParams);
         
-        RETURN_IF_NT_FAILED_UNEXPECTED(
+        RETURN_IF_NT_FAILED(
             WdfUsbTargetDeviceSelectConfig(context->UsbDevice, WDF_NO_OBJECT_ATTRIBUTES, &configParams));
 
         context->UsbInterface = configParams.Types.SingleInterface.ConfiguredUsbInterface;
@@ -200,7 +200,7 @@ EvtOSRDevicePrepareHardware(
 
         if (context->NumberConfiguredPipes == 0)
         {
-            RETURN_IF_NT_FAILED_UNEXPECTED(USBD_STATUS_BAD_NUMBER_OF_ENDPOINTS);
+            RETURN_IF_NT_FAILED(USBD_STATUS_BAD_NUMBER_OF_ENDPOINTS);
         }
 
         for (UINT8 i = 0; i < context->NumberConfiguredPipes; i++)
@@ -258,7 +258,7 @@ EvtOSRDevicePrepareHardware(
             //WDF_USB_CONTINUOUS_READER_CONFIG_INIT(&readerConfig, OsrInterruptDipSwitchReadComplete, context, sizeof(BYTE));
             WDF_USB_CONTINUOUS_READER_CONFIG_INIT(&readerConfig, interruptComplete, context, context->DipSwitches.Info.MaximumPacketSize);
 
-            RETURN_IF_NT_FAILED_UNEXPECTED(WdfUsbTargetPipeConfigContinuousReader(context->DipSwitches.Object, &readerConfig));
+            RETURN_IF_NT_FAILED(WdfUsbTargetPipeConfigContinuousReader(context->DipSwitches.Object, &readerConfig));
         }
         else
         {

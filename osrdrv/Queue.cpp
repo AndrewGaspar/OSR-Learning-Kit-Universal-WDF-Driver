@@ -62,7 +62,7 @@ Return Value:
     ioctlQueueConfig.EvtIoStop = DriverEvtIoStop;
 
     WDFQUEUE ioctlQueue;
-    RETURN_IF_NT_FAILED_UNEXPECTED(
+    RETURN_IF_NT_FAILED(
         WdfIoQueueCreate(Device, &ioctlQueueConfig, WDF_NO_OBJECT_ATTRIBUTES, &ioctlQueue));
 
     OSRLogExit();

@@ -84,7 +84,7 @@ Return Value:
                            DriverEvtDeviceAdd
                            );
 
-    RETURN_IF_NT_FAILED_UNEXPECTED(
+    RETURN_IF_NT_FAILED(
         WdfDriverCreate(DriverObject, RegistryPath, &attributes, &config, WDF_NO_HANDLE));
 
     OSRLogExit();
@@ -124,7 +124,7 @@ Return Value:
 
     OSRLogEntry();
 
-    RETURN_IF_NT_FAILED(DriverCreateDevice(DeviceInit));
+    RETURN_IF_NT_FAILED_EXPECTED(DriverCreateDevice(DeviceInit));
 
     OSRLogExit();
 
