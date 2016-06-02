@@ -222,7 +222,7 @@ PASSIVE PAGED NTSTATUS EvtOSRDevicePrepareHardware(
                 _In_ WDFUSBPIPE Pipe,
                 _In_ WDFMEMORY Buffer,
                 _In_ size_t NumBytesTransferred,
-                _In_ WDFCONTEXT Context) 
+                _In_ WDFCONTEXT Context) UP_TO_DISPATCH NONPAGED
             {
                 UNREFERENCED_PARAMETER((Context, Pipe));
 
@@ -238,7 +238,6 @@ PASSIVE PAGED NTSTATUS EvtOSRDevicePrepareHardware(
             };
 
             WDF_USB_CONTINUOUS_READER_CONFIG readerConfig;
-            //WDF_USB_CONTINUOUS_READER_CONFIG_INIT(&readerConfig, OsrInterruptDipSwitchReadComplete, context, sizeof(BYTE));
             WDF_USB_CONTINUOUS_READER_CONFIG_INIT(&readerConfig, interruptComplete, context, context->DipSwitches.Info.MaximumPacketSize);
 
             RETURN_IF_NT_FAILED(WdfUsbTargetPipeConfigContinuousReader(context->DipSwitches.Object, &readerConfig));
