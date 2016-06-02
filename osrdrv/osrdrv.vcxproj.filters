@@ -40,6 +40,9 @@
     <ClInclude Include="TraceLogging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Precomp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Queue.cpp">

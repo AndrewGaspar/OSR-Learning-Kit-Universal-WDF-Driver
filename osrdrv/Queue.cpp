@@ -14,6 +14,7 @@ Environment:
 
 --*/
 
+#include "Precomp.h"
 #include "driver.h"
 
 #ifdef ALLOC_PRAGMA

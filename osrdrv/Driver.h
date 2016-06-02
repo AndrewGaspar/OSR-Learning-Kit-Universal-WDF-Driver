@@ -16,14 +16,6 @@ Environment:
 
 #pragma once
 
-#define INITGUID
-
-#include <ntddk.h>
-#include <wdf.h>
-#include <usb.h>
-#include <usbdlib.h>
-#include <wdfusb.h>
-
 #include "Device.h"
 #include "Queue.h"
 #include "TraceLogging.h"

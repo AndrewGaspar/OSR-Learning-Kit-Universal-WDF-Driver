@@ -14,9 +14,15 @@ Environment:
 
 --*/
 
+#define INITGUID
+
+#include "Precomp.h"
+
 #include "driver.h"
 
 #include <ktl\scope.h>
+
+#include "Public.h"
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (INIT, DriverEntry)
@@ -80,16 +86,14 @@ Return Value:
     attributes.EvtCleanupCallback = DriverEvtDriverContextCleanup;
 
     WDF_DRIVER_CONFIG config;
-    WDF_DRIVER_CONFIG_INIT(&config,
-                           DriverEvtDeviceAdd
-                           );
+    WDF_DRIVER_CONFIG_INIT(&config, DriverEvtDeviceAdd);
 
     RETURN_IF_NT_FAILED(
         WdfDriverCreate(DriverObject, RegistryPath, &attributes, &config, WDF_NO_HANDLE));
 
-    OSRLogExit();
-
     unregisterLoggingOnFailure.Dismiss();
+
+    OSRLogExit();
 
     return STATUS_SUCCESS;
 }
@@ -124,7 +128,7 @@ Return Value:
 
     OSRLogEntry();
 
-    RETURN_IF_NT_FAILED_EXPECTED(DriverCreateDevice(DeviceInit));
+    RETURN_IF_NT_FAILED(DriverCreateDevice(DeviceInit));
 
     OSRLogExit();
 

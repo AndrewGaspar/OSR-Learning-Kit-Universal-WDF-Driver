@@ -14,6 +14,7 @@ Environment:
 
 --*/
 
+#include "Precomp.h"
 #include "Driver.h"
 
 #ifdef ALLOC_PRAGMA
@@ -60,7 +61,7 @@ Return Value:
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
 
     WDFDEVICE device;
-    RETURN_IF_NT_FAILED_EXPECTED(WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device));
+    RETURN_IF_NT_FAILED(WdfDeviceCreate(&DeviceInit, &deviceAttributes, &device));
 
     //
     // Get a pointer to the device context structure that we just associated
@@ -82,7 +83,7 @@ Return Value:
     // Create a device interface so that applications can find and talk
     // to us.
     //
-    RETURN_IF_NT_FAILED_EXPECTED(WdfDeviceCreateDeviceInterface(
+    RETURN_IF_NT_FAILED(WdfDeviceCreateDeviceInterface(
         device,
         &GUID_DEVINTERFACE_OSR_FX2,
         NULL // ReferenceString
@@ -91,7 +92,7 @@ Return Value:
     //
     // Initialize the I/O Package and any Queues
     //
-    RETURN_IF_NT_FAILED_EXPECTED(DriverQueueInitialize(device));
+    RETURN_IF_NT_FAILED(DriverQueueInitialize(device));
 
     OSRLogExit();
 
