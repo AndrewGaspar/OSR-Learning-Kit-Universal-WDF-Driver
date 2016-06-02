@@ -2,12 +2,16 @@
 
 #include "utility.h"
 
+#ifndef SCOPE_EXIT_CODE_SEGMENT
+#define SCOPE_EXIT_CODE_SEGMENT "PAGE"
+#endif
+
 namespace ktl
 {
     namespace details
     {
         template<typename Functor>
-        class ScopeExitImpl
+        class __declspec(code_seg(SCOPE_EXIT_CODE_SEGMENT)) ScopeExitImpl
         {
             Functor m_scopeExit;
             bool m_isDismissed = false;
@@ -25,12 +29,12 @@ namespace ktl
                 other.m_isDismissed = true;
             }
 
-            ScopeExitImpl & operator=(ScopeExitImpl&&)
+            ScopeExitImpl & operator=(ScopeExitImpl&& other)
             {
                 m_isDismissed = other.m_isDismissed;
-                m_scopeExit = other.m_scopeExit;
+                m_scopeExit = ktl::move(other.m_scopeExit);
 
-                m_isDismissed = true;
+                other.m_isDismissed = true;
 
                 return *this;
             }
@@ -51,7 +55,7 @@ namespace ktl
     }
 
     template<typename F>
-    auto make_scope_exit(F&& f)
+    auto __declspec(code_seg(SCOPE_EXIT_CODE_SEGMENT)) make_scope_exit(F&& f)
     {
         return details::ScopeExitImpl<F>(ktl::move(f));
     }
