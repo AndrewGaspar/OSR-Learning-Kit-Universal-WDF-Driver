@@ -62,7 +62,7 @@ Return Value:
     // Initialize TraceLogging
     TraceLoggingRegister(OSRDriverTraceProvider);
 
-    auto unregisterLoggingOnFailure = ktl::make_scope_exit_paged([]() PAGED {
+    auto unregisterLoggingOnFailure = ktl::make_scope_exit_paged([]() INIT_CODE {
         TraceLoggingUnregister(OSRDriverTraceProvider);
     });
 
