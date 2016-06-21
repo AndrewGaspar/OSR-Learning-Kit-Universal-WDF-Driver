@@ -16,8 +16,6 @@ Environment:
 
 #pragma once
 
-#include "Public.h"
-
 constexpr UINT8 DipSwitchEndpoint = 129;
 constexpr UINT8 DataOutEndpoint = 6;
 constexpr UINT8 DataInEndpoint = 136;
@@ -72,6 +70,8 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(DEVICE_CONTEXT, DeviceGetContext)
 // Function to initialize the device and its callbacks
 //
 EXTERN_C PASSIVE PAGED NTSTATUS DriverCreateDevice(_Inout_ PWDFDEVICE_INIT DeviceInit);
+
 EXTERN_C PASSIVE PAGED EVT_WDF_DEVICE_PREPARE_HARDWARE EvtOSRDevicePrepareHardware;
-EXTERN_C PASSIVE PAGED EVT_WDF_DEVICE_D0_ENTRY EvtOSRD0Entry;
-EXTERN_C PASSIVE PAGED EVT_WDF_DEVICE_D0_EXIT EvtOSRD0Exit;
+EXTERN_C PASSIVE PAGED EVT_WDF_DEVICE_D0_ENTRY         EvtOSRD0Entry;
+EXTERN_C PASSIVE PAGED EVT_WDF_DEVICE_D0_EXIT          EvtOSRD0Exit;
+EXTERN_C PASSIVE PAGED EVT_WDF_DEVICE_FILE_CREATE      OSRDeviceFileCreate;

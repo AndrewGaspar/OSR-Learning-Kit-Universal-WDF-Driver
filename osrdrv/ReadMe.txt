@@ -26,12 +26,12 @@ Driver.cpp & Driver.h
 Device.cpp & Device.h
     WDFDEVICE related functionality and callbacks.
 
-Queue.cpp & Queue.h	
+Queue.cpp & Queue.h
     WDFQUEUE related functionality and callbacks.
 
 Trace.h
     Definitions for WPP tracing.
-	
+
 /////////////////////////////////////////////////////////////////////////////
 
 Learn more about Kernel Mode Driver Framework here:

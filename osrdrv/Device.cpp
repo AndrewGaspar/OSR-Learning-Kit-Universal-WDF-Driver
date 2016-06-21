@@ -15,7 +15,12 @@ Environment:
 --*/
 
 #include "Precomp.h"
-#include "Driver.h"
+
+#include "Device.h"
+#include "TraceLogging.h"
+#include "Result.h"
+#include "Queue.h"
+#include <Public.h>
 
 PASSIVE PAGED NTSTATUS DriverCreateDevice(
     _Inout_ PWDFDEVICE_INIT DeviceInit)
@@ -41,12 +46,19 @@ Return Value:
 
     OSRLogEntry();
 
+    // Power events
     WDF_PNPPOWER_EVENT_CALLBACKS pnpPowerCallbacks;
     WDF_PNPPOWER_EVENT_CALLBACKS_INIT(&pnpPowerCallbacks);
     pnpPowerCallbacks.EvtDevicePrepareHardware = EvtOSRDevicePrepareHardware;
     pnpPowerCallbacks.EvtDeviceD0Entry = EvtOSRD0Entry;
     pnpPowerCallbacks.EvtDeviceD0Exit = EvtOSRD0Exit;
     WdfDeviceInitSetPnpPowerEventCallbacks(DeviceInit, &pnpPowerCallbacks);
+
+    // File events
+    WDF_FILEOBJECT_CONFIG fileObjectConfig;
+    WDF_FILEOBJECT_CONFIG_INIT(&fileObjectConfig, OSRDeviceFileCreate, nullptr, nullptr);
+
+    WdfDeviceInitSetFileObjectConfig(DeviceInit, &fileObjectConfig, WDF_NO_OBJECT_ATTRIBUTES);
 
     WDF_OBJECT_ATTRIBUTES deviceAttributes;
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
@@ -251,4 +263,26 @@ PASSIVE PAGED NTSTATUS EvtOSRDevicePrepareHardware(
     OSRLogExit();
 
     return STATUS_SUCCESS;
+}
+
+
+PAGED PASSIVE VOID
+OSRDeviceFileCreate(
+    _In_ WDFDEVICE Device,
+    _In_ WDFREQUEST Request,
+    _In_ WDFFILEOBJECT FileObject)
+{
+    UNREFERENCED_PARAMETER((Device));
+
+    PAGED_CODE();
+
+    OSRLogEntry();
+
+    auto fileName = WdfFileObjectGetFileName(FileObject);
+
+    OSRLoggingWrite("FileCreate", TraceLoggingUnicodeString(fileName, "FileName"));
+
+    WdfRequestComplete(Request, STATUS_FILE_NOT_AVAILABLE);
+
+    OSRLogExit();
 }

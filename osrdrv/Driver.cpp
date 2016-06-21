@@ -14,15 +14,12 @@ Environment:
 
 --*/
 
-#define INITGUID
-
 #include "Precomp.h"
 
-#include "driver.h"
-
-#include <ktl\scope.h>
-
-#include "Public.h"
+#include "Driver.h"
+#include "Device.h"
+#include "TraceLogging.h"
+#include "Result.h"
 
 // {27d1e96e-78c4-41d7-aba4-9f9ca3379a15}
 TRACELOGGING_DEFINE_PROVIDER(

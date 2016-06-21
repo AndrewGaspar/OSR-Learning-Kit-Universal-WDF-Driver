@@ -15,7 +15,11 @@ Environment:
 --*/
 
 #include "Precomp.h"
-#include "driver.h"
+
+#include "Queue.h"
+#include "Driver.h"
+#include "TraceLogging.h"
+#include "Result.h"
 
 PASSIVE PAGED NTSTATUS DriverQueueInitialize(
     _In_ WDFDEVICE Device)

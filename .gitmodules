@@ -1,0 +1,6 @@
+[submodule "dep/wtl"]
+	path = dep/wtl
+	url = https://github.com/AndrewGaspar/wtl.git
+[submodule "dep/km-stl"]
+	path = dep/km-stl
+	url = https://github.com/AndrewGaspar/km-stl.git

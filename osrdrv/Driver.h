@@ -16,11 +16,6 @@ Environment:
 
 #pragma once
 
-#include "Device.h"
-#include "Queue.h"
-#include "TraceLogging.h"
-#include "Result.h"
-
 //
 // WDFDRIVER Events
 //
