@@ -5,31 +5,40 @@
 
 #include <strsafe.h>
 
-int main()
+using namespace wtl;
+
+hresult hr_main()
 {
     wprintf_s(L"Finding device interfaces...\n");
 
-    auto list = wtl::cm::get_device_interface_list(GUID_DEVINTERFACE_OSR_FX2);
+    auto list = hresult_from_configret(
+        cm::get_device_interface_list(GUID_DEVINTERFACE_OSR_FX2));
+    if (!list) return list;
 
-    if (list)
+    for (auto devInterface : list.get())
     {
-        for (auto devInterface : list.get())
+        wprintf_s(L"DI: %ls\n", devInterface);
+
+        auto filePath = std::wstring(devInterface) + L"\\DIP_SWITCHES";
+
+        auto file = file::create(filePath.c_str(), GENERIC_READ | GENERIC_WRITE);
+
+        if (!file)
         {
-            wprintf_s(L"DI: %ls\n", devInterface);
-
-            auto filePath = std::wstring(devInterface) + L"\\DIP_SWITCHES";
-
-            auto mHandle = wtl::file::create(filePath.c_str(), GENERIC_READ | GENERIC_WRITE);
-
-            if (!mHandle)
-            {
-                wprintf_s(L"Failed to open %ls with error %u\n", filePath.c_str(), mHandle.get_result());
-            }
+            wprintf_s(L"Failed to create %ls with error %u\n", filePath.c_str(), file.get_result());
         }
     }
-    else
+
+    return S_OK;
+}
+
+int main()
+{
+    auto mainResult = hr_main();
+
+    if (!mainResult)
     {
-        wprintf_s(L"Error: Failed with 0x%08X\n", list.get_result());
+        wprintf_s(L"Error: Failed with 0x%08X\n", mainResult.get_result());
     }
 
     wprintf_s(L"Exiting...\n");

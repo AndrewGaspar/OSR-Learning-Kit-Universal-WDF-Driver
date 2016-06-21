@@ -12,6 +12,7 @@
 
 #include <Public.h>
 #include <Windows.h>
+#include <cfgmgr32.h>
 #include <wtl\result.h>
 #include <wtl\cfgmgr.h>
 #include <wtl\file.h>
