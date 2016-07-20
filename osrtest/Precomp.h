@@ -16,3 +16,4 @@
 #include <wtl\result.h>
 #include <wtl\cfgmgr.h>
 #include <wtl\file.h>
+#include <wtl\event.h>

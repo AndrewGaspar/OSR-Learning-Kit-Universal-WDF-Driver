@@ -56,13 +56,14 @@
   <ItemGroup>
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="Driver.cpp" />
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="Queue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h" />
     <ClInclude Include="Driver.h" />
+    <ClInclude Include="File.h" />
     <ClInclude Include="Precomp.h" />
-    <ClInclude Include="Public.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="TraceLogging.h" />

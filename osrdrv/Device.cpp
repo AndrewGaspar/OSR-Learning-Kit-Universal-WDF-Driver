@@ -20,6 +20,7 @@ Environment:
 #include "TraceLogging.h"
 #include "Result.h"
 #include "Queue.h"
+#include "File.h"
 #include <Public.h>
 
 PASSIVE PAGED NTSTATUS DriverCreateDevice(
@@ -56,9 +57,12 @@ Return Value:
 
     // File events
     WDF_FILEOBJECT_CONFIG fileObjectConfig;
-    WDF_FILEOBJECT_CONFIG_INIT(&fileObjectConfig, OSRDeviceFileCreate, nullptr, nullptr);
+    WDF_FILEOBJECT_CONFIG_INIT(&fileObjectConfig, EvtOSRDeviceFileCreate, nullptr, nullptr);
 
-    WdfDeviceInitSetFileObjectConfig(DeviceInit, &fileObjectConfig, WDF_NO_OBJECT_ATTRIBUTES);
+    WDF_OBJECT_ATTRIBUTES fileObjectAttributes;
+    WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&fileObjectAttributes, FileContext);
+
+    WdfDeviceInitSetFileObjectConfig(DeviceInit, &fileObjectConfig, &fileObjectAttributes);
 
     WDF_OBJECT_ATTRIBUTES deviceAttributes;
     WDF_OBJECT_ATTRIBUTES_INIT_CONTEXT_TYPE(&deviceAttributes, DEVICE_CONTEXT);
@@ -230,29 +234,7 @@ PASSIVE PAGED NTSTATUS EvtOSRDevicePrepareHardware(
 
         if (context->DipSwitches)
         {
-            PFN_WDF_USB_READER_COMPLETION_ROUTINE interruptComplete = [](
-                _In_ WDFUSBPIPE Pipe,
-                _In_ WDFMEMORY Buffer,
-                _In_ size_t NumBytesTransferred,
-                _In_ WDFCONTEXT Context) UP_TO_DISPATCH NONPAGED
-            {
-                UNREFERENCED_PARAMETER((Context, Pipe));
-
-                if (NumBytesTransferred != 1)
-                {
-                    OSRLoggingWrite("InvalidDipSwitchReadSize", TraceLoggingLevel(TRACE_LEVEL_ERROR), TraceLoggingValue(NumBytesTransferred));
-                    return;
-                }
-
-                auto value = *static_cast<BYTE*>(WdfMemoryGetBuffer(Buffer, nullptr));
-
-                OSRLoggingWrite("DipSwitchValue", TraceLoggingLevel(TRACE_LEVEL_INFORMATION), TraceLoggingValue(value, "Value"));
-            };
-
-            WDF_USB_CONTINUOUS_READER_CONFIG readerConfig;
-            WDF_USB_CONTINUOUS_READER_CONFIG_INIT(&readerConfig, interruptComplete, context, context->DipSwitches.Info.MaximumPacketSize);
-
-            RETURN_IF_NT_FAILED(WdfUsbTargetPipeConfigContinuousReader(context->DipSwitches.Object, &readerConfig));
+            WdfUsbTargetPipeSetNoMaximumPacketSizeCheck(context->DipSwitches.Object);
         }
         else
         {
@@ -263,26 +245,4 @@ PASSIVE PAGED NTSTATUS EvtOSRDevicePrepareHardware(
     OSRLogExit();
 
     return STATUS_SUCCESS;
-}
-
-
-PAGED PASSIVE VOID
-OSRDeviceFileCreate(
-    _In_ WDFDEVICE Device,
-    _In_ WDFREQUEST Request,
-    _In_ WDFFILEOBJECT FileObject)
-{
-    UNREFERENCED_PARAMETER((Device));
-
-    PAGED_CODE();
-
-    OSRLogEntry();
-
-    auto fileName = WdfFileObjectGetFileName(FileObject);
-
-    OSRLoggingWrite("FileCreate", TraceLoggingUnicodeString(fileName, "FileName"));
-
-    WdfRequestComplete(Request, STATUS_FILE_NOT_AVAILABLE);
-
-    OSRLogExit();
 }

@@ -20,6 +20,8 @@ Environment:
 #include "Driver.h"
 #include "TraceLogging.h"
 #include "Result.h"
+#include "File.h"
+#include "Device.h"
 
 PASSIVE PAGED NTSTATUS DriverQueueInitialize(
     _In_ WDFDEVICE Device)
@@ -58,6 +60,7 @@ Return Value:
     WDF_IO_QUEUE_CONFIG_INIT_DEFAULT_QUEUE(&ioctlQueueConfig, WdfIoQueueDispatchParallel);
 
     ioctlQueueConfig.EvtIoDeviceControl = DriverEvtIoDeviceControl;
+    ioctlQueueConfig.EvtIoRead = EvtOSRDeviceRead;
     ioctlQueueConfig.EvtIoStop = DriverEvtIoStop;
 
     WDFQUEUE ioctlQueue;
@@ -67,6 +70,69 @@ Return Value:
     OSRLogExit();
 
     return STATUS_SUCCESS;
+}
+
+UP_TO_DISPATCH NONPAGED VOID
+EvtOSRDeviceRead(
+    _In_ WDFQUEUE Queue,
+    _In_ WDFREQUEST Request,
+    _In_ size_t Length)
+{
+    UNREFERENCED_PARAMETER(Length);
+
+    OSRLogEntry();
+
+    auto device = WdfIoQueueGetDevice(Queue);
+    auto deviceContext = DeviceGetContext(device);
+
+    auto fileObject = WdfRequestGetFileObject(Request);
+    auto fileContext = GetFileContext(fileObject);
+
+    if (fileContext->File == FileType::DipSwitches)
+    {
+        auto status = [&]() {
+            WDFMEMORY memory;
+            RETURN_IF_NT_FAILED(WdfRequestRetrieveOutputMemory(Request, &memory));
+            
+            size_t size;
+            WdfMemoryGetBuffer(memory, &size);
+
+            RETURN_IF_NT_FAILED(WdfUsbTargetPipeFormatRequestForRead(
+                deviceContext->DipSwitches.Object,
+                Request,
+                memory,
+                nullptr));
+
+            auto completionRoutine = [](WDFREQUEST Request, WDFIOTARGET, PWDF_REQUEST_COMPLETION_PARAMS Params, WDFCONTEXT) {
+                OSRLogEntry();
+
+                WdfRequestCompleteWithInformation(Request, Params->IoStatus.Status, Params->IoStatus.Information);
+
+                OSRLogExit();
+            };
+
+            WdfRequestSetCompletionRoutine(Request, completionRoutine, nullptr);
+
+            auto target = WdfUsbTargetPipeGetIoTarget(deviceContext->DipSwitches.Object);
+            if (!WdfRequestSend(Request, target, WDF_NO_SEND_OPTIONS))
+            {
+                RETURN_IF_NT_FAILED(WdfRequestGetStatus(Request));
+            }
+
+            return STATUS_SUCCESS;
+        }();
+
+        if (!NT_SUCCESS(status))
+        {
+            WdfRequestComplete(Request, status);
+        }
+    }
+    else
+    {
+        WdfRequestComplete(Request, STATUS_NOT_IMPLEMENTED);
+    }
+
+    OSRLogExit();
 }
 
 PASSIVE PAGED VOID DriverEvtIoDeviceControl(
