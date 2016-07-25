@@ -27,7 +27,7 @@ TRACELOGGING_DEFINE_PROVIDER(
     "OSRTraceProvider",
     (0x27d1e96e, 0x78c4, 0x41d7, 0xab, 0xa4, 0x9f, 0x9c, 0xa3, 0x37, 0x9a, 0x15));
 
-PASSIVE INIT_CODE NTSTATUS DriverEntry(
+PASSIVE INIT NTSTATUS DriverEntry(
     _In_ PDRIVER_OBJECT  DriverObject,
     _In_ PUNICODE_STRING RegistryPath)
 /*++
@@ -59,7 +59,7 @@ Return Value:
     // Initialize TraceLogging
     TraceLoggingRegister(OSRDriverTraceProvider);
 
-    auto unregisterLoggingOnFailure = ktl::make_scope_exit_paged([]() INIT_CODE {
+    auto unregisterLoggingOnFailure = ktl::make_scope_exit_paged([]() INIT {
         TraceLoggingUnregister(OSRDriverTraceProvider);
     });
 

@@ -227,7 +227,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\inc;..\dep\km-stl\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;..\dep\km-stl\inc;..\dep\ktl\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Assembler_Debug|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Precomp.h</PrecompiledHeaderFile>
